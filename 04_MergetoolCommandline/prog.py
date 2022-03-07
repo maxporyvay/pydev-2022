@@ -27,6 +27,7 @@ iron_kingdoms_generators = {'caspian_midlunder_sulese': CaspianMidlunderSuleseFu
                             'thurian_morridane': ThurianMorridaneFullnameGenerator,
                             'tordoran': TordoranFullnameGenerator,
                             'trollkin': TrollkinFullnameGenerator}
+gens = {**simple_generators, **elven_generators, **iron_kingdoms_generators}
 
 
 class Repl(cmd.Cmd):
@@ -90,7 +91,7 @@ class Repl(cmd.Cmd):
                     return
             elif len(args) == 3:
                 if args[1] in iron_kingdoms_generators and args[2] in ['male', 'female']:
-                    gen = iron_kingdoms_generators[args[1]]
+                    gen = rhiron_kingdoms_generators[args[1]]
                     if args[2] == 'male':
                         print(gen().get_name_simple(GENDER.MALE, current_language))
                     elif args[2] == 'female':
@@ -101,7 +102,38 @@ class Repl(cmd.Cmd):
                 return
         else:
             return
-                
+
+    def do_info(self, arg):
+        args = shlex.split(arg, comments=True)
+        if len(args) < 1:
+            return
+        if len(args) == 1:
+            if args[0] in gens:
+                gen = gens[args[0]]
+                print(gen().get_names_number())
+            else:
+                return
+        elif len(args) == 2:
+            if args[0] in gens:
+                gen = gens[args[0]]
+                if args[1] == 'male':
+                    print(gen().get_names_number(GENDER.MALE))
+                elif args[1] == 'female':
+                    print(gen().get_names_number(GENDER.FEMALE))
+                elif args[1] == 'language':
+                    trs = gen().get_name().translations
+                    dct = {}
+                    for k, v in trs.items():
+                        dct = v
+                        break
+                    print(*dct)
+                else:
+                    return
+            else:
+                return
+        else:
+            return
+        
     def do_exit(self, arg):
         return True
 
