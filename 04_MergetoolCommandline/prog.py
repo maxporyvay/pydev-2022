@@ -50,22 +50,19 @@ class Repl(cmd.Cmd):
         else:
             return
 
-    def do_generate(self, arg):
-        args = shlex.split(arg, comments=True)
-        if len(args) < 1:
-            return
+    def gengen(self, args):
         if args[0] in simple_generators:
-            gen = simple_generators[args[0]]
-            if len(args) == 1:
-                print(gen().get_name_simple(GENDER.MALE, self.current_language))
-            elif len(args) == 2:
-                if args[1] == 'male':
+                gen = simple_generators[args[0]]
+                if len(args) == 1:
                     print(gen().get_name_simple(GENDER.MALE, self.current_language))
-                elif args[1] == 'female':
-                    print(gen().get_name_simple(GENDER.FEMALE, self.current_language))
-                else:
-                    return
-            else: return
+                elif len(args) == 2:
+                    if args[1] == 'male':
+                        print(gen().get_name_simple(GENDER.MALE, self.current_language))
+                    elif args[1] == 'female':
+                        print(gen().get_name_simple(GENDER.FEMALE, self.current_language))
+                    else:
+                        return
+                else: return
         elif args[0] == 'elven':
             if len(args) == 1:
                 print(elven_generators['warhammer']().get_name_simple(GENDER.MALE, self.current_language))
@@ -118,6 +115,18 @@ class Repl(cmd.Cmd):
                 return
         else:
             return
+
+    def do_generate(self, arg):
+        args = shlex.split(arg, comments=True)
+        if len(args) < 1:
+            return
+        try:
+            self.gengen(args)
+        except KeyError:
+            temp = self.current_language
+            self.current_language = LANGUAGE.NATIVE
+            self.gengen(args)
+            self.current_language = temp
 
     def do_info(self, arg):
         args = shlex.split(arg, comments=True)
