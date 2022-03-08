@@ -158,6 +158,43 @@ class Repl(cmd.Cmd):
                 return
         else:
             return
+
+    def complete_info(self, text, line, begidx, endidx):
+        if line.count(' ') == 1:
+            return [s for s in gens if s.startswith(text)]
+        elif line.count(' ') == 2:
+            if line.split()[1] in gens:
+                return [s for s in ['male', 'female', 'language'] if s.startswith(text)]
+            else:
+                return []
+        else:
+            return []
+
+    def complete_generate(self, text, line, begidx, endidx):
+        if line.count(' ') == 1:
+            return [s for s in list(simple_generators.keys()) + ['elven', 'iron_kingdoms'] if s.startswith(text)]
+        elif line.count(' ') == 2:
+            if line.split()[1] in simple_generators:
+                return [s for s in ['male', 'female'] if s.startswith(text)]
+            elif line.split()[1] == 'elven':
+                return [s for s in list(elven_generators.keys()) + ['male', 'female'] if s.startswith(text)]
+            elif line.split()[1] == 'iron_kingdoms':
+                return [s for s in list(iron_kingdoms_generators.keys()) + ['male', 'female'] if s.startswith(text)]
+            else:
+                return []
+        elif line.count(' ') == 3:
+            if line.split()[1] == 'elven' and line.split()[2] in elven_generators or line.split()[1] == 'iron_kingdoms' and line.split()[2] in iron_kingdoms_generators:
+                return [s for s in ['male', 'female'] if s.startswith(text)]
+            else:
+                return []
+        else:
+            return []
+
+    def complete_language(self, text, line, begidx, endidx):
+        if line.count(' ') == 1:
+            return [s for s in ['ru', 'RU', 'en', 'EN', 'native', 'NATIVE'] if s.startswith(text)]
+        else:
+            return []
         
     def do_exit(self, arg):
         return True
